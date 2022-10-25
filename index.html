@@ -15,26 +15,37 @@
         <div class="previous-operation"></div>
         <div class="current-operation"></div>
         <div class="buttons-container">
-            <button class="number">AC</button>
-            <button class="number">+/-</button>
-            <button class="number">%</button>
-            <button class="number-special">÷</button>
-            <button class="number">7</button>
-            <button class="number">8</button>
-            <button class="number">9</button>
-            <button class="number-special">X</button>
-            <button class="number">4</button>
-            <button class="number">5</button>
-            <button class="number">6</button>
-            <button class="number-special">-</button>
-            <button class="number">1</button>
-            <button class="number">2</button>
-            <button class="number">3</button>
-            <button class="number-special">+</button>
-            <button class="number-zero">0</button>
-            <button class="number">.</button>
-            <button class="number-special equal-btn">=</button>
+            <button onclick="writeOnLabel('delete_all')"class="number">AC</button>
+            <button onclick="writeOnLabel()"class="number">+/-</button>
+            <button onclick="writeOnLabel('porcentagem')"class="number">%</button>
+            <button onclick="writeOnLabel('dividir')"class="number-special">÷</button>
+            <button onclick="writeOnLabel('7')"class="number">7</button>
+            <button onclick="writeOnLabel('8')"class="number">8</button>
+            <button onclick="writeOnLabel('9')"class="number">9</button>
+            <button onclick="writeOnLabel('multiplicar')"class="number-special">X</button>
+            <button onclick="writeOnLabel('4')"class="number">4</button>
+            <button onclick="writeOnLabel('5')"class="number">5</button>
+            <button onclick="writeOnLabel('6')"class="number">6</button>
+            <button onclick="writeOnLabel('subtrair')"class="number-special">-</button>
+            <button onclick="writeOnLabel('1')"class="number">1</button>
+            <button onclick="writeOnLabel('2')"class="number">2</button>
+            <button onclick="writeOnLabel('3')"class="number">3</button>
+            <button onclick="writeOnLabel('adicionar')"class="number-special">+</button>
+            <button onclick="writeOnLabel('0')"class="number-zero">0</button>
+            <button onclick="writeOnLabel('decimal')"class="number">.</button>
+            <button onclick="writeOnLabel('resolver')"class="number-special equal-btn">=</button>
         </div>
     </div>
 </body>
+<script>
+    const currentData = document.querySelector(".current-operation");
+    var text = document.createTextNode('');
+    function writeOnLabel(value_){
+        if(value_ == '1'){
+            text.nodeValue="1";
+            currentData.appendChild(text);
+            console.log('1');
+        }
+    }
+</script>
 </html>
