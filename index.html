@@ -12,82 +12,193 @@
 </head>
 <body>
     <div class="calc">
-        <div class="previous-operation"></div>
-        <div class="current-operation"></div>
+        <div data-previous-operand class="previous-operation"></div>
+        <div data-current-operand class="current-operation"></div>
         <div class="buttons-container">
-            <button onclick="writeOnLabel('delete_all')"class="number">AC</button>
-            <button onclick="writeOnLabel()"class="number">+/-</button>
-            <button onclick="writeOnLabel('porcentagem')"class="number">%</button>
-            <button onclick="writeOnLabel('dividir')"class="number-special">÷</button>
-            <button onclick="writeOnLabel('7')"class="number">7</button>
-            <button onclick="writeOnLabel('8')"class="number">8</button>
-            <button onclick="writeOnLabel('9')"class="number">9</button>
-            <button onclick="writeOnLabel('multiplicar')"class="number-special">X</button>
-            <button onclick="writeOnLabel('4')"class="number">4</button>
-            <button onclick="writeOnLabel('5')"class="number">5</button>
-            <button onclick="writeOnLabel('6')"class="number">6</button>
-            <button onclick="writeOnLabel('subtrair')"class="number-special">-</button>
-            <button onclick="writeOnLabel('1')"class="number">1</button>
-            <button onclick="writeOnLabel('2')"class="number">2</button>
-            <button onclick="writeOnLabel('3')"class="number">3</button>
-            <button onclick="writeOnLabel('adicionar')"class="number-special">+</button>
-            <button onclick="writeOnLabel('0')"class="number-zero">0</button>
-            <button onclick="writeOnLabel('decimal')"class="number">.</button>
-            <button onclick="writeOnLabel('resolver')"class="number-special equal-btn">=</button>
+            <button data-all-clear class="number">AC</button>
+            <button data-delete class="number">+/-</button>
+            <button data-operation class="number">%</button>
+            <button data-operation class="number-special">÷</button>
+            <button data-number class="number">7</button>
+            <button data-number class="number">8</button>
+            <button data-number class="number">9</button>
+            <button data-operation class="number-special">X</button>
+            <button data-number class="number">4</button>
+            <button data-number class="number">5</button>
+            <button data-number class="number">6</button>
+            <button data-number class="number-special">-</button>
+            <button data-number class="number">1</button>
+            <button data-number class="number">2</button>
+            <button data-number class="number">3</button>
+            <button data-operation class="number-special">+</button>
+            <button data-number class="number-zero">0</button>
+            <button data-number class="number">.</button>
+            <button data-all-clear class="number-special equal-btn">=</button>
         </div>
     </div>
 </body>
 <script>
-    const currentData = document.querySelector(".current-operation");
-    var text = document.createTextNode('');
-    function writeOnLabel(value_){
-        switch (value_){
-        case '1':
-            text.nodeValue="1";
-            currentData.appendChild(text);
-            console.log('1');
-            break;
-        case '2':
-            text.nodeValue="2";
-            currentData.appendChild(text);
-            console.log('2');
-            break;
-        case '3': 
-            text.nodeValue="3";
-            currentData.appendChild(text);
-            console.log('3');
-            break;
-        case '4': 
-            text.nodeValue="4";
-            currentData.appendChild(text);
-            console.log('4');
-            break;
-            case '5':
-            text.nodeValue="5";
-            currentData.appendChild(text);
-            console.log('5');
-            break;
-        case '6':
-            text.nodeValue="6";
-            currentData.appendChild(text);
-            console.log('6');
-            break;
-        case '7': 
-            text.nodeValue="7";
-            currentData.appendChild(text);
-            console.log('7');
-            break;
-        case '8': 
-            text.nodeValue="8";
-            currentData.appendChild(text);
-            console.log('8');
-            break;
-            case '9': 
-            text.nodeValue="9";
-            currentData.appendChild(text);
-            console.log('9');
-            break;
-        }
+class Calculator {
+  constructor(previousOperandTextElement, currentOperandTextElement) {
+    this.previousOperandTextElement = previousOperandTextElement
+    this.currentOperandTextElement = currentOperandTextElement
+    this.clear()
+  }
+
+  clear() {
+    this.currentOperand = ''
+    this.previousOperand = ''
+    this.operation = undefined
+  }
+
+  delete() {
+    this.currentOperand = this.currentOperand.toString().slice(0, -1)
+  }
+
+  appendNumber(number) {
+    if (number === '.' && this.currentOperand.includes('.')) return
+    this.currentOperand = this.currentOperand.toString() + number.toString()
+  }
+
+  chooseOperation(operation) {
+    if (this.currentOperand === '') return
+    if (this.previousOperand !== '') {
+      this.compute()
     }
+    this.operation = operation
+    this.previousOperand = this.currentOperand
+    this.currentOperand = ''
+  }
+
+  compute() {
+    let computation
+    const prev = parseFloat(this.previousOperand)
+    const current = parseFloat(this.currentOperand)
+    if (isNaN(prev) || isNaN(current)) return
+    switch (this.operation) {
+      case '+':
+        computation = prev + current
+        break
+      case '-':
+        computation = prev - current
+        break
+      case '*':
+        computation = prev * current
+        break
+      case '÷':
+        computation = prev / current
+        break
+      default:
+        return
+    }
+    this.currentOperand = computation
+    this.operation = undefined
+    this.previousOperand = ''
+  }
+
+  getDisplayNumber(number) {
+    const stringNumber = number.toString()
+    const integerDigits = parseFloat(stringNumber.split('.')[0])
+    const decimalDigits = stringNumber.split('.')[1]
+    let integerDisplay
+    if (isNaN(integerDigits)) {
+      integerDisplay = ''
+    } else {
+      integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
+    }
+    if (decimalDigits != null) {
+      return `${integerDisplay}.${decimalDigits}`
+    } else {
+      return integerDisplay
+    }
+  }
+
+  updateDisplay() {
+    this.currentOperandTextElement.innerText =
+      this.getDisplayNumber(this.currentOperand)
+    if (this.operation != null) {
+      this.previousOperandTextElement.innerText =
+        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
+    } else {
+      this.previousOperandTextElement.innerText = ''
+    }
+  }
+}
+
+
+const numberButtons = document.querySelectorAll('[data-number]')
+const operationButtons = document.querySelectorAll('[data-operation]')
+const equalsButton = document.querySelector('[data-equals]')
+const deleteButton = document.querySelector('[data-delete]')
+const allClearButton = document.querySelector('[data-all-clear]')
+const previousOperandTextElement = document.querySelector('[data-previous-operand]')
+const currentOperandTextElement = document.querySelector('[data-current-operand]')
+
+const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement)
+
+numberButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    calculator.appendNumber(button.innerText)
+    calculator.updateDisplay()
+  })
+})
+
+operationButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    calculator.chooseOperation(button.innerText)
+    calculator.updateDisplay()
+  })
+})
+
+equalsButton.addEventListener('click', button => {
+  calculator.compute()
+  calculator.updateDisplay()
+})
+
+allClearButton.addEventListener('click', button => {
+  calculator.clear()
+  calculator.updateDisplay()
+})
+
+deleteButton.addEventListener('click', button => {
+  calculator.delete()
+  calculator.updateDisplay()
+})
+
+document.addEventListener('keydown', function (event) {
+  let patternForNumbers = /[0-9]/g;
+  let patternForOperators = /[+\-*\/]/g
+  if (event.key.match(patternForNumbers)) {
+    event.preventDefault();
+    calculator.appendNumber(event.key)
+    calculator.updateDisplay()
+  }
+  if (event.key === '.') {
+    event.preventDefault();
+    calculator.appendNumber(event.key)
+    calculator.updateDisplay()
+  }
+  if (event.key.match(patternForOperators)) {
+    event.preventDefault();
+    calculator.chooseOperation(event.key)
+    calculator.updateDisplay()
+  }
+  if (event.key === 'Enter' || event.key === '=') {
+    event.preventDefault();
+    calculator.compute()
+    calculator.updateDisplay()
+  }
+  if (event.key === "Backspace") {
+    event.preventDefault();
+    calculator.delete()
+    calculator.updateDisplay()
+  }
+  if (event.key == 'Delete') {
+    event.preventDefault();
+    calculator.clear()
+    calculator.updateDisplay()
+  }
+
+});    
 </script>
 </html>
